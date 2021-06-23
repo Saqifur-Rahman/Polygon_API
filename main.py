@@ -1,4 +1,3 @@
-import numpy as np
 import matplotlib.pyplot as plt
 import requests
 
@@ -11,15 +10,12 @@ def main():
     high = []
     low = []
 
-    # print(json.dumps(data, indent = 2))
     for i in range(data["resultsCount"]):
         result = data["results"][i]
-        # print(i, result["h"])
         date.append(i)
         high.append(result["h"])
         low.append(result["l"])
 
-    # print(date, high, low) 
     plt.plot(date, high, label = "highest price")
     plt.plot(date, low, label = "lowest price")
     plt.xlabel("Days (May 2021)")
