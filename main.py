@@ -1,6 +1,5 @@
-import sys
 import os
-from flask import Flask, render_template, request, flash
+from flask import *
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
@@ -10,6 +9,7 @@ from datetime import date
 app = Flask(__name__)
 app.secret_key = "hello_world"
 
+# Function - returns name of the Month
 def monthName(month):
     month_name = {
         "01": "January",
@@ -27,6 +27,7 @@ def monthName(month):
     }
     return month_name[month]
 
+# Function - returns no. of days in month
 def monthRange(month, year):
     month_range = {
         "01": ["01","31"],
@@ -42,6 +43,7 @@ def monthRange(month, year):
         "12": ["01","31"]
     }
 
+    # handling condition for february
     if int(year) % 4 == 0 and int(year) % 100 != 0:
         month_range["02"] = ["01","29"]
     elif int(year) % 100 == 0:
@@ -53,13 +55,16 @@ def monthRange(month, year):
 
     return month_range[str(month)]
 
-
+# Function - plots chart
 def plotChart(month, year):
     month_range = monthRange(month, year)
 
+    # making API call
     key = "9pq_4hMsbkqRCk9X7zgBlyuujMLgs6iA"
     URL = f"https://api.polygon.io/v2/aggs/ticker/X:BTCUSD/range/1/day/{year}-{month}-{month_range[0]}/{year}-{month}-{month_range[1]}?adjusted=true&sort=asc&limit=120&apiKey={key}"
     r = requests.get(url = URL)
+    
+    # storing JSON response
     data = r.json()
     date = []
     high = []
@@ -71,9 +76,11 @@ def plotChart(month, year):
         high.append(result["h"])
         low.append(result["l"])
 
+    # reomve image if exists
     if os.path.exists("static/plot.png"):
         os.remove("static/plot.png")
 
+    # plot the line chart
     plt.plot(date, high, label = "highest price")
     plt.plot(date, low, label = "lowest price")
     plt.xlabel(f"Days [{monthName(month)} {year}]")
@@ -84,10 +91,12 @@ def plotChart(month, year):
     plt.clf()
     return
 
+# Route for homepage
 @app.route("/")
 def home():
     return render_template("home.html")
 
+# Route for results page
 @app.route("/result", methods=['POST'])
 def result():
     if request.method == 'POST':
