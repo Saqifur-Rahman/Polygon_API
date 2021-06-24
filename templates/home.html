@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BTCUSD - Home</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" 
+    integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+</head>
+<body>
+    
+    <!--Navbar start-->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand ml-5 " href="#">
+            <img src="https://img.icons8.com/color-glass/30/000000/bitcoin.png" class="mr-2"/>
+            <b class="text-monospace"> BITCOIN </b>
+        </a>
+      </nav>
+    <!--Navbar end-->
+
+    <!--Jumbotron start-->
+    <div class="jumbotron jumbotron-fluid mx-5 rounded-lg">
+        <div class="container">
+            <h1 class="display-6 text-monospace">Find Highest & Lowest Prices of BTC:</h1>
+            <form action="/result" method="POST" enctype = "multipart/form-data">
+                <div class="form-group">
+                    <label for="exampleFormControlFile1">📆 Enter Month:</label>
+                    <select class="form-control form-control-sm w-25" name="month" required>
+                        <option value="01" default>January</option>
+                        <option value="02">February</option>
+                        <option value="03">March</option>
+                        <option value="04">April</option>
+                        <option value="05">May</option>
+                        <option value="06">June</option>
+                        <option value="07">July</option>
+                        <option value="08">August</option>
+                        <option value="09">September</option>
+                        <option value="10">October</option>
+                        <option value="11">November</option>
+                        <option value="12">December</option>
+                    </select>
+                    <!-- <textarea class="form-control" rows="5" name="message" required></textarea> -->
+                    <br>
+                    <label for="exampleFormControlFile1">📅 Enter Year:</label>
+                    <select class="form-control form-control-sm w-25" name="year" required>
+                        <option value="2020" deafult>2020</option>
+                        <option value="2021">2021</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-dark">Submit</button>
+            </form>
+        </div>
+    </div>
+    <!--Jumbotron end-->
+
+</body>
+</html>
+
+<!--Bootstrap-->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" 
+integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" 
+crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" 
+integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" 
+crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" 
+integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" 
+crossorigin="anonymous"></script>
