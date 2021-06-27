@@ -5,6 +5,7 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import requests
 from datetime import date
+import time
 
 app = Flask(__name__)
 app.secret_key = "hello_world"
@@ -77,8 +78,11 @@ def plotChart(month, year):
         low.append(result["l"])
 
     # reomve image if exists
-    if os.path.exists("static/plot.png"):
-        os.remove("static/plot.png")
+    folder_path = (r'static/')
+    folder = os.listdir(folder_path)
+    for image in folder:
+        if image.endswith('.png'):
+            os.remove(os.path.join(folder_path,image))
 
     # plot the line chart
     plt.plot(date, high, label = "highest price")
@@ -87,14 +91,15 @@ def plotChart(month, year):
     plt.ylabel("Price [USD]")
     plt.title("Range of Prices of Bitcoin")
     plt.legend()
-    plt.savefig("static/plot.png")
+    filename = f'{int(time.time())}.png'
+    plt.savefig(f"static/{filename}")
     plt.clf()
-    return
+    return filename
 
-# Route for homepage
-@app.route("/")
+# Route for BTC-Range
+@app.route("/btc-range")
 def home():
-    return render_template("home.html")
+    return render_template("btc_range.html")
 
 # Route for results page
 @app.route("/result", methods=['POST'])
@@ -108,8 +113,20 @@ def result():
             flash("Data not available for this month.")
             return render_template("home.html")
 
-        plotChart(month, year)
-        return render_template("result.html")
+        filename = plotChart(month, year)
+        return render_template("result.html", filename=filename)
+
+# Route for prices list of coins
+@app.route("/")
+def coins_list():
+    # making API call
+    URL = "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=20&page=1&sparkline=false"
+    r = requests.get(url = URL)
+
+    # storing JSON response
+    data = r.json()
+    return render_template("coins_list.html", data=data)
 
 if __name__ == '__main__':
+
     app.run(debug=True)

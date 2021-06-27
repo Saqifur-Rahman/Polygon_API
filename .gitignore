@@ -4,3 +4,4 @@ venv
 # IDE files
 .vscode
 submitted
+*.png

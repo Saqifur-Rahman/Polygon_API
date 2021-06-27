@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BTCUSD - Result</title>
+    <title>C R Y P T O | Result</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" 
     integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
 </head>
@@ -12,9 +12,19 @@
     <!--Navbar start-->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <a class="navbar-brand ml-5 " href="#">
-            <img src="https://img.icons8.com/color-glass/30/000000/bitcoin.png" class="mr-2" />
-            <b class="text-monospace"> BITCOIN </b>
+            <img src="https://img.icons8.com/office/30/000000/blockchain-new-logo.png" class="mr-2" />
+            <b class="text-monospace"> C R Y P T O </b>
         </a>
+        <div class="collapse navbar-collapse" id="navbarNavDropdown" style="align-self: right;">
+            <ul class="navbar-nav ml-auto mr-5">
+              <li class="nav-item">
+                <a class="nav-link mr-3" href="/">Prices</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/btc-range">BTC Range</a>
+              </li>
+            </ul>
+          </div>
       </nav>
     <!--Navbar end-->
 
@@ -22,7 +32,7 @@
     <div class="jumbotron jumbotron-fluid mx-5 rounded-lg">
         <div class="container">
             <h1 class="display-6 text-monospace">Result:</h1>
-            <img src="/static/plot.png" alt="failed to load!" style="width:480px; height:360px" /> 
+            <img src="/static/{{ filename }}" alt="failed to load!" style="width:480px; height:360px" /> 
             <div>
                 <a href="/" type="button" class="btn btn-dark mt-4">Done</a>
             </div>           
