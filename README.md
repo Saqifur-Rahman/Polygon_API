@@ -5,7 +5,7 @@ Instructions:
 
 1. Install the dependencies.
 ```
-pip install requirements.txt
+pip install -r requirements.txt
 ```
 
 2. Run the file.
