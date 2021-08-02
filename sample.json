@@ -1,0 +1,18 @@
+{
+  "portfolios" : {
+    "user" : {
+      "coin" : 10
+    }
+  },
+  "transactions" : {
+    "0" : {
+      "coin" : "",
+      "email" : "",
+      "mode" : "",
+      "price" : 0,
+      "timestamp" : 0,
+      "units" : 0,
+      "usd" : 0
+    }
+  }
+}

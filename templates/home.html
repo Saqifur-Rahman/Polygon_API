@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% block title %} Home {% endblock %}
+{% block content %}
+<div class="my-3 mx-5">
+
+    <div class="row">
+
+        <!-- News -->
+        <div class="col-sm-8">
+          <div class="card">
+            <div class="card-body">
+                <h3 class="card-title text-center"><span class="badge badge-light">News</span></h3>
+            
+              <div class="row">
+                {% for article in news.articles %}
+                <div class="col-sm-4">
+                    <div class="card mb-3">
+                        <img class="card-img-top" src="{{ article.urlToImage }}" alt="Card image cap" style="height: 200px">
+                        <div class="card-body">
+                            <a href="{{ article.url }}">
+                                <h5 class="card-title">{{ article.title[:30] }}</h5>
+                            </a>
+                          <p class="card-text">{{ article.description[:75] }}....</p>
+                          <p class="card-text"><small class="text-muted">{{ article.publishedAt }}</small></p>
+                        </div>
+                      </div>
+                </div>
+                {% endfor %}
+              </div>
+              
+            </div>
+          </div>
+        </div>
+        <!-- News end -->
+        
+        <!-- Events -->
+        <div class="col-sm-4">
+          <div class="card">
+            <div class="card-body">
+              <h3 class="card-title text-center"><span class="badge badge-light">Events</span></h3>
+              
+              {% for event in events.data %}
+              <div class="card mb-3">
+                <img class="card-img-top" src="{{ event['screenshot'] }}" alt="Card image cap">
+                <div class="card-body">
+                  <a href="{{ event['website'] }}">
+                    <h5 class="card-title">{{ event['title'] }}</h5>
+                  </a>
+                  <p class="card-text">{{ event['description'][:140] }}....</p>
+                  <p class="card-text">
+                    <small class="text-muted">
+                       {{ event['start_date'] }} to {{ event['end_date'] }} <t>|<t>  
+                        
+                      {% if event['city'] %}
+                        {{ event['city'] }},
+                      {% endif %}
+
+                      {% if event['country'] %}
+                       {{ event['country'] }}
+                      {% endif %}
+                    </small>
+                </p>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Evenst end -->
+
+</div>
+{% endblock %}
+    
+

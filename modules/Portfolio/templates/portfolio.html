@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+{% block title %} My Portfolio {% endblock %}
+{% block content %}
+    
+<div class="my-3 mx-5">
+    <div class="row">
+
+        <div class="col-sm-5">
+            <div class="card">
+                <div class="card-body">
+                    <h1 class="card-title text-monospace">PORTFOLIO 
+                        <a type="submit" class="btn btn-dark btn-sm" href="/portfolio">
+                            <img src="https://img.icons8.com/android/22/ffffff/refresh.png"/>
+                        </a>
+                    </h1>
+
+                    <div class="row my-3">
+                        
+                        <div class="col-sm-4">
+                            <div class="card" style="border: 0;">
+                                <h5><span class="badge badge-warning">PORTFOLIO VALUE </span></h5>
+                                <h2>{{ portfolio_value|round(2) }}</h2>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="card" style="border: 0;">
+                                <h5><span class="badge badge-info">MARGIN</span></h5>
+                                {% if (portfolio_value-total_invested )>0 %}
+                                    <h2>+{{ (portfolio_value-total_invested )|round(2) }}</h2>
+                                {% else %}
+                                    <h2>{{ (portfolio_value-total_invested )|round(2) }}</h2>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            
+                        </div>
+
+                    </div>
+
+                        <table class="table table-hover mx-auto">
+                            <thead>
+                            <tr class="text-muted">
+                                <th scope="col">TOKEN</th>
+                                <th scope="col">SYMBOL</th>
+                                <th scope="col">QTY.</th>
+                                <th scope="col">TOTAL VALUE</th>
+                            </tr>
+                            </thead>
+                            <tbody id="portfolio">
+                            {% if portfolio %}
+                            {% for pf in portfolio %}
+                                <tr>
+                                    <td >
+                                        <img src="{{ pf['image'] }}" class="mb-1" alt="" style="height: 25px; width: 25px;">
+                                        {{ pf["name"] }}
+                                    </td>
+                                    <td ><b>{{ pf["symbol"]|upper }}</b></td>
+                                    <td>{{ pf["units"] }}</td>
+                                    <td class="text-center">${{ (pf["units"]*pf["current_price"])|round(2) }}</td>
+                                </tr>
+                            {% endfor %}
+                            {% else %}
+                                <tr>
+                                    <td>-</td>
+                                    <td>-</td>
+                                    <td>-</td>
+                                    <td>-</td>
+                                </tr>
+                            {% endif %}
+                            </tbody>
+                        </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-7">
+            <div class="card">
+                <div class="card-body">
+                    <h1 class="card-title text-monospace">TRANSACTIONS</h1>
+                    <h5><span class="badge badge-secondary mb-3">{{ session['email'] }}</span></h5>
+
+                    
+                    <table class="table table-hover mx-auto">
+                        <tbody id="portfolio">
+                        {% if transactions %}
+                        {% for tsn in transactions %}
+                                <tr>
+                                    <td >
+                                        <img src="{{ tsn['image'] }}" class="mb-1" alt="" style="height: 25px; width: 25px;">
+                                        {{ tsn["name"] }}
+                                    </td>
+                                    {% if tsn["mode"] == "BUY" %}
+                                    <td class="text-success">{{ tsn["mode"] }}</td>
+                                    {% else %}
+                                    <td class="text-danger">{{ tsn["mode"] }}</td>
+                                    {% endif %}
+                                    <td >{{ tsn["units"] }} <b>{{ tsn["symbol"]|upper }}<b></td>
+                                    <td ><b>${{ tsn["usd"] }}</b></td>
+                                    <td>${{ tsn['price'] }}</td>
+                                    <td>{{ tsn['time'] }}</td>
+                                </tr>                                
+                            
+                        {% endfor %}
+                        {% else %}
+                        <small class="form-text text-muted mt-0">No Transactions Available.</small>
+                        {% endif %}
+                        </tbody>
+                    </table>
+                    
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+    
+{% endblock %}

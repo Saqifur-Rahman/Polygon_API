@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block title %} Home {% endblock %}
+{% block content %}
+<div class="my-3 mx-5">
+
+    <div class="card mx-auto" style="margin-top: 10%; width: 30%; border-radius: 15px;">
+        {% if status=='404' %}
+        <div class="alert alert-danger mx-3 mt-2 text-center" role="alert">
+            Incorrect Email or Password!
+        </div>
+        {% endif %}
+
+        {% if status=='401' %}
+        <div class="alert alert-warning mx-3 mt-2 text-center" role="alert">
+            Please Sign In for viewing Portfolio!
+        </div>
+        {% endif %}
+
+        <h2 class="card-title mx-auto my-3 text-monospace">
+            Sign In    
+        </h2>
+        <div class="card-body mx-auto" style="width: 85%;">
+            <form name="signupForm" onsubmit="return validateForm()" method="POST">
+                <div class="form-group">
+                  <input type="email" class="form-control" name="email" aria-describedby="emailHelp" placeholder="📧 Enter email" required>
+                </div>
+                <div class="form-group">
+                  <input type="password" class="form-control" name="password" placeholder="🔑 Password" required>
+                  <!-- <small class="form-text text-muted"><a href="/reset-password">Forgot Password</a></small> -->
+                </div> 
+                <center>
+                    <button type="submit" class="btn btn-success align-center mt-2 w-100">Sign In</button>
+                    <small class="form-text text-muted mt-3">Not a User? <a href="/signup">Register</a></small>
+                </center>
+            </form>
+        </div>
+      </div>
+    
+</div>
+
+<!-- Form Validation -->
+<script>
+
+function validateForm() {
+    let form = document.forms["signupForm"]
+    let email = form["email"].value
+    let password = form["password"].value
+
+    if(password.length < 8) {
+        alert("Password must atleast be 8 characters long!")
+        return false
+    }
+}
+
+</script>
+
+{% endblock %}

@@ -1,0 +1,269 @@
+{% extends 'base.html' %}
+{% block title %} Coins - {{ coin[0]['name'] }} {% endblock %}
+{% block content %}
+
+<div class="my-3 mx-5">
+    <div class="row">
+        <div class="col-sm-8">
+          <div class="card">
+            <div class="card-body">
+              <h1 class="card-title text-center">
+                  <img src="{{ coin[0]['image'] }}" class="mx-0 mb-1" id="coin_logo" style="height: 45px;">
+                  {{ coin[0]['name'] }}
+              </h1>
+              <div class="mb-2 text-center">
+                <h3 class="font-weight-normal">
+                    <span class="badge badge-pill badge-light">{{ coin[0]['symbol'] }}</span> | 
+                    <span id="price_change_percentage_24h"></span>
+                    <a type="submit" class="btn btn-dark btn-sm" href="/crypto/coin?id={{ coin[0]['id'] }}">
+                        <img src="https://img.icons8.com/android/22/ffffff/refresh.png"/>
+                    </a>
+                </h3>
+              </div>
+              <div class="mb-4 text-center">
+                <span class="badge badge-primary">Current Price</span> <b id="current_price"></b> <t> | 
+                <span class="badge badge-warning">24H High</span> <b id="high_24h"></b> <t> | 
+                <span class="badge badge-info">24H Low</span> <b id="low_24h"></b> <t>
+              </div>
+              <canvas id="myChart"  class="ml-auto mr-auto" style="width:100%;max-width:700px"></canvas>
+
+              <div class=" text-center mt-4" role="group" aria-label="Basic example">
+                <button type="button" class="btn btn-secondary" onclick="fetchChart(1)" >1D</button>
+                <button type="button" class="btn btn-secondary" onclick="fetchChart(7)" >1W</button>
+                <button type="button" class="btn btn-secondary" onclick="fetchChart(30)" >1M</button>
+                <button type="button" class="btn btn-secondary" onclick="fetchChart(365)" >1Y</button>
+                <button type="button" class="btn btn-secondary" onclick="fetchChart('max')" >ALL</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-sm-4">
+          <div class="card">
+            <div class="card-body">
+                <h5 class="card-title text-center">Buy/Sell {{ coin[0]['name'] }} </h5>
+                {% if session['email'] %}
+                {% if message %}
+                <div class="alert alert-danger mx-3 mt-2 text-center" role="alert">
+                    {{ message }}
+                </div>
+                {% endif %}
+
+                <div class="card mx-auto" style="width: 90%; border-radius: 15px;">
+                    
+                    <div class="card-body mx-auto">
+                        <form name="buyForm" onsubmit="return validateForm()" method="POST">
+                            <input type = "hidden" name = "mode" value = "BUY" />
+                            <input type = "hidden" name = "email" value = "{{ session['email'] }}" />
+                            <input type = "hidden" name = "price" class="price" />
+                            <input type = "hidden" name = "portfolio_id" value="{{ session['portfolio_id'] }}"/>
+                            <center>
+                                <small class="form-text text-muted mt-0">CURRENT BUYING PRICE</small>
+                                <b id="current_price2"></b>
+                            </center>
+                            
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col-sm">
+                                        <input type="number" class="form-control"  id="buy_usd"  name="usd" placeholder="In USD" 
+                                            oninput="usdToCoin(this.value)" onchange="usdToCoin(this.value)"
+                                            step="any"
+                                        >
+                                    </div>
+                                    <p class="mt-1">=</p>
+                                    <div class="col-sm">
+                                        <input type="number" class="form-control" id="buy_coin" name="units" placeholder="In {{ coin[0]['symbol']|upper }}"
+                                            oninput="coinToUsd(this.value)" onchange="coinToUsd(this.value)"
+                                            step="any"
+                                        >
+                                    </div>
+                                </div>
+                            </div>
+
+                            <center>
+                                <button type="submit" class="btn btn-success align-center mt-2 w-75">BUY</button>
+                            </center>
+                        </form>
+                    </div>
+                  </div>
+                
+
+                  <div class="card mx-auto mt-3" style="width: 90%; border-radius: 15px;">
+                    
+                    <div class="card-body mx-auto">
+                        <form name="Form" onsubmit="return validateForm()" method="POST">
+                            <input type = "hidden" name = "mode" value = "SELL" />
+                            <input type = "hidden" name = "email" value = "{{ session['email'] }}" />
+                            <input type = "hidden" name = "price" class="price"/>
+                            <input type = "hidden" name = "portfolio_id" value="{{ session['portfolio_id'] }}"/>
+                            <center>
+                                <small class="form-text text-muted mt-0">CURRENT BUYING PRICE</small>
+                                <b id="current_price3"></b>
+                            </center>
+                            
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col-sm">
+                                        <input type="number" class="form-control" id="sell_usd" name="usd" placeholder="In USD" 
+                                            oninput="usdToCoin2(this.value)" onchange="usdToCoin2(this.value)"
+                                            step="any"
+                                        >
+                                    </div>
+                                    <p class="mt-1">=</p>
+                                    <div class="col-sm">
+                                        <input type="number" class="form-control" id="sell_coin" name="units" placeholder="In {{ coin[0]['symbol']|upper }}" 
+                                            oninput="coinToUsd2(this.value)" onchange="coinToUsd2(this.value)"
+                                            step="any"    
+                                        >
+                                    </div>
+                                </div>
+                            </div>
+
+                            <center>
+                                <button type="submit" class="btn btn-danger align-center mt-2 w-75">SELL</button>
+                            </center>
+                        </form>
+                    </div>
+                  </div>
+            </div>
+            
+
+
+            <small class="form-text text-muted text-center mb-3">View your <a href="/portfolio">Transactions</a></small>
+
+                {% else %}
+
+                <small class="form-text text-muted mt-3 text-center">You need to <a href="/signin">Sign In</a> to view this section!</small>
+
+                {% endif %}
+            </div>
+          </div>
+        </div>
+
+      </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    var current_price = null
+
+    function validateForm() {
+        let form = document.forms["Form"]
+        let usd = form["usd"].value
+        let coin = form["coin"].value
+
+        if(usd <= 0 || coin <=0) {
+            alert("Invalid buy/sell amount!")
+            return false
+        }
+    }
+
+
+    function fetchData() {
+        const coin_id = "{{ coin_id|safe }}"
+        const url = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${coin_id}&per_page=1&page=1&sparkline=false`
+        $.getJSON(url, (coin_info)=>{
+            // console.log(coin_info[0].current_price)
+            current_price = coin_info[0].current_price
+            if(document.getElementsByClassName("price").length>0) {
+                document.getElementsByClassName("price")[0].value = current_price
+                document.getElementsByClassName("price")[1].value = current_price
+            }
+            
+
+            document.getElementById("current_price").innerText = "$"+coin_info[0].current_price.toFixed(2)
+            if(document.getElementById("current_price2"))
+                document.getElementById("current_price2").innerText = "$"+coin_info[0].current_price.toFixed(2)
+            if(document.getElementById("current_price3")) 
+                document.getElementById("current_price3").innerText = "$"+coin_info[0].current_price.toFixed(2)
+            
+            document.getElementById("high_24h").innerText = "$"+coin_info[0].high_24h.toFixed(2)
+            document.getElementById("low_24h").innerText = "$"+coin_info[0].low_24h.toFixed(2)
+            
+            if(coin_info[0].price_change_percentage_24h >=0) {
+                document.getElementById("price_change_percentage_24h").className = "badge badge-success"
+                document.getElementById("price_change_percentage_24h").innerText = "+"+coin_info[0].price_change_percentage_24h.toFixed(2)
+            } else {
+                document.getElementById("price_change_percentage_24h").className = "badge badge-danger"
+                document.getElementById("price_change_percentage_24h").innerText = coin_info[0].price_change_percentage_24h.toFixed(2)
+            }
+        })
+    }
+
+    function fetchChart(days) {
+        const url = `https://api.coingecko.com/api/v3/coins/{{ coin[0]['id'] }}/market_chart?vs_currency=usd&days=${days}`
+        $.getJSON(url, (data_points)=>{
+            // console.log(data_points.prices)
+
+            var xValues = []
+            var yValues = []
+
+            for(let i in data_points.prices) {
+                xValues.push(data_points.prices[i][0])
+                yValues.push(data_points.prices[i][1])
+            }
+
+            new Chart("myChart", {
+                type: "line",
+                data: {
+                    labels: xValues,
+                    datasets: [{
+                        fill: false,
+                        lineTension: 0,
+                        backgroundColor: "rgba(2,2,255,0.5)",
+                        borderColor: "rgba(2,2,255,0.5)",
+                        data: yValues,
+                        pointRadius: 1,
+                        label: '{{ coin }}',
+                        indexAxis: ''
+                    }]
+                },
+                options: {
+                    legend: {
+                        display: false
+                    },
+                    scales: {
+                        xAxes: [{
+                            ticks: {
+                                display: false
+                            },
+                            gridLines: {
+                                display: false
+                            }
+                        }],
+                        yAxes: [{
+                            gridLines: {
+                                display: true
+                            }
+                        }]
+                    }
+                }
+            });
+
+        })  
+    }
+
+    $(document).ready(function() {
+        fetchChart(1)
+        setInterval(fetchData, 2000)
+    })
+
+    function usdToCoin(valNum) {
+        document.getElementById("buy_coin").value = (valNum/current_price).toFixed(8)
+    }
+
+    function coinToUsd(valNum) {
+        document.getElementById("buy_usd").value = (valNum*current_price).toFixed(2)
+    }
+
+    function usdToCoin2(valNum) {
+        document.getElementById("sell_coin").value = (valNum/current_price).toFixed(8)
+    }
+
+    function coinToUsd2(valNum) {
+        document.getElementById("sell_usd").value = (valNum*current_price).toFixed(2)
+    }
+</script>
+
+{% endblock %}

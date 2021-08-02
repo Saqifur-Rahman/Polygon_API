@@ -1,0 +1,171 @@
+{% extends 'base.html' %}
+{% block title %} Coins {% endblock %}
+{% block content %}
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <style>
+    img {
+      height: 25px;
+      width: 25px;
+    }
+  </style>
+
+  <form class="form-inline mt-3">
+    <input class="form-control" type="search" id="myInput" placeholder="Search Coins..." aria-label="Search" style="width: 30%; margin-left: 25%">
+    <h6 class="mx-4 mt-1">Sort By: </h6>
+    <button type="button" class="btn btn-secondary mr-2" onclick="sortTable(false)">
+      <img src="https://img.icons8.com/ios-glyphs/30/ffffff/sort-up.png"/>
+    </button>
+    <button type="button" class="btn btn-secondary mr-3" onclick="sortTable(true)">
+      <img src="https://img.icons8.com/ios-glyphs/30/ffffff/sort-down.png"/>
+    </button>
+    <button type="submit" class="btn btn-dark" onclick="fetchdata()">
+      <img src="https://img.icons8.com/android/24/ffffff/refresh.png"/>
+    </button>
+  </form>
+  <br>
+
+  <!-- Coins List Table start -->
+  <div class="card" style="width: 100%;">
+      <div class="card-body">
+        <table class="table table-hover " id="coins_list_table">
+          <thead class="thead-dark">
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Name</th>
+                <th scope="col">Symbol</th>
+                <th scope="col">Price (USD)</th>
+                <th scope="col">24H Change</th>
+                <th scope="col">24H High</th>
+                <th scope="col">24H Low</th>
+                <th scope="col">Market Cap</th>
+                <th scope="col">Total Volume</th>
+              </tr>
+          </thead>
+        </table>
+      </div>
+    </div>
+  
+  <!-- Coins List Table end -->
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+  function sortTable(order) {
+    var table, rows, switching, i, x, y, shouldSwitch;
+    table = document.getElementById("coins_list_table");
+    switching = true;
+
+    while (switching) {
+      switching = false;
+      rows = table.rows;
+
+      for (i = 1; i < (rows.length - 1); i++) {
+        shouldSwitch = false;
+        x = rows[i].getElementsByTagName("TD")[3];
+        y = rows[i + 1].getElementsByTagName("TD")[3];
+
+        if(order) {
+          if (Number(x.innerHTML) > Number(y.innerHTML)) {
+            shouldSwitch = true;
+            break;
+          }
+        } else {
+          if (Number(x.innerHTML) < Number(y.innerHTML)) {
+            shouldSwitch = true;
+            break;
+          }
+        }
+      }
+      if (shouldSwitch) {
+        rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+        switching = true;
+      }
+    }
+  }
+
+  function insertCell(param, symbol, image) {
+    var cell = document.createElement("td");
+    if(image) {
+      var img = document.createElement('img')
+      img.src = image
+      img.className = "mr-3"
+      cell.appendChild(img)
+    }
+    
+    if(symbol) 
+      var cellText = document.createTextNode(symbol+param);
+    else
+      var cellText = document.createTextNode(param);
+    cell.appendChild(cellText);
+    return cell
+  }
+
+  function fetchdata(order) {
+
+    const url = "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=200&page=1&sparkline=false"
+
+    $.getJSON(url, (coins_list)=>{
+      console.log(coins_list)
+
+      if(document.getElementById('coins_list'))
+        document.getElementById('coins_list').remove()
+
+      // generate rows
+      var tblBody = document.createElement("tbody")
+      tblBody.id = "coins_list"
+      for(let i in coins_list) {
+        var row = document.createElement("tr");
+        row.setAttribute('id',coins_list[i].symbol)
+        row.setAttribute("data-href", `/crypto/coin?id=${coins_list[i].id}`)
+
+        // market cap rank
+        row.appendChild(insertCell(coins_list[i].market_cap_rank));
+        // name with image
+        row.appendChild(insertCell(coins_list[i].name, "", coins_list[i].image));
+        // symbol
+        row.appendChild(insertCell(coins_list[i].symbol));
+        // current_price
+        row.appendChild(insertCell(coins_list[i].current_price, ""));
+        // price change percentage
+        if(coins_list[i].price_change_percentage_24h>0)
+          row.appendChild(insertCell(coins_list[i].price_change_percentage_24h, "+", "https://img.icons8.com/ios-glyphs/30/26e07f/circled-chevron-up.png"));
+        else
+          row.appendChild(insertCell(coins_list[i].price_change_percentage_24h, "", "https://img.icons8.com/ios-glyphs/30/fa314a/circled-chevron-down.png"));
+        // high 24
+        row.appendChild(insertCell(coins_list[i].high_24h, ""));
+        // low 24
+        row.appendChild(insertCell(coins_list[i].low_24h, ""));
+        // market cap
+        row.appendChild(insertCell(coins_list[i].market_cap, ""));
+        // total volume
+        row.appendChild(insertCell(coins_list[i].total_volume));
+
+        tblBody.appendChild(row);
+      }
+      document.getElementById('coins_list_table').appendChild(tblBody)
+    })
+  }
+
+  fetchdata()
+
+  $(document).ready(function() {
+
+    // search
+    $("#myInput").on("keyup", function() {
+      var value = $(this).val().toLowerCase();
+
+      $("#coins_list tr").filter(function() {
+        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+      });
+    });
+
+    // clickable rows
+    $(document.body).on("click", "tr[data-href]", function() {
+      window.location.href = this.dataset.href;
+    });
+
+    setInterval(fetchdata,7500);
+
+  });
+</script>
+
+{% endblock %}
